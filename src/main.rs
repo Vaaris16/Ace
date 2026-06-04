@@ -1,22 +1,38 @@
-use std::{
-    path::{Path, PathBuf},
-    str::FromStr,
+use clap::{Parser, Subcommand};
+
+use crate::{
+    commands::add::install_package::install_packages, frameworks::frameworks::Frameworks,
+    utilities::errors::app_errors::AppErrors,
 };
 
-use clap::Parser;
-
-use crate::utilities::edit_file::edit_file;
-
 mod commands;
+mod frameworks;
 mod utilities;
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 struct Cli {
-    name: String,
+    #[command(subcommand)]
+    commands: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    Add {
+        package: String,
+
+        #[arg(short, long, required = true)]
+        framework: Frameworks,
+    },
 }
 
 fn main() {
     let cli = Cli::parse();
 
-    println!("name: {}", cli.name);
+    match cli.commands {
+        Commands::Add { package, framework } => {
+            if let Err(e) = install_packages(&package, framework) {
+                println!("{:?}", e);
+            }
+        }
+    }
 }

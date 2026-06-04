@@ -1,9 +1,7 @@
-name = "tailwindcss"
-
 [[steps]]
 cmd = "run_cmd"
 command = "npm"
-arg = "install tailwindcss @tailwindcss/postcss postcss"
+args = "install tailwindcss @tailwindcss/postcss postcss"
 
 [[steps]]
 cmd = "mk_file"

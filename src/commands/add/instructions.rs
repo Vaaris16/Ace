@@ -11,28 +11,27 @@ pub struct InstructionPackage {
 }
 
 #[derive(Deserialize)]
-#[serde(tag = "action", rename_all = "snake_case")]
+#[serde(tag = "cmd", rename_all = "snake_case")]
 pub enum Steps {
-    RunCmd {
-        commands: String,
-        args: String,
-    },
+    #[serde(rename = "run_cmd")]
+    RunCmd { command: String, args: String },
+
+    #[serde(rename = "edit_file")]
     EditFile {
         needle: String,
         path: PathBuf,
         insert: String,
     },
-    MkFile {
-        path: PathBuf,
-        contents: String,
-    },
+
+    #[serde(rename = "mk_file")]
+    MkFile { path: PathBuf, content: String },
 }
 
 impl Steps {
     pub fn execute_commands(&self) -> Result<(), AppErrors> {
         match self {
-            Self::RunCmd { commands, args } => run_cmd(commands, args)?,
-            Self::MkFile { path, contents } => mk_file(path, contents)?,
+            Self::RunCmd { command, args } => run_cmd(command, args)?,
+            Self::MkFile { path, content } => mk_file(path, content)?,
             Self::EditFile {
                 needle,
                 path,

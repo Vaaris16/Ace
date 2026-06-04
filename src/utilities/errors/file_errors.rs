@@ -1,24 +1,24 @@
-use std::fmt::Display;
+use std::{fmt::Display, path::PathBuf};
 
 #[derive(Debug)]
 pub enum FileErrors {
-    FileExists,
-    NotFound,
-    PermissionDenied,
-    FailedRead,
-    FailedWrite,
-    FailedParse,
+    FailedRead { file_path: PathBuf },
+    FailedWrite { file_path: PathBuf },
+    FailedParse { file_path: PathBuf },
 }
 
 impl Display for FileErrors {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            FileErrors::FileExists => write!(f, "File already exists"),
-            FileErrors::NotFound => write!(f, "File not found"),
-            FileErrors::PermissionDenied => write!(f, "Permission denied"),
-            FileErrors::FailedRead => write!(f, "Failed to read file"),
-            FileErrors::FailedWrite => write!(f, "Failed to create file"),
-            FileErrors::FailedParse => write!(f, "Failed to parse file"),
+            FileErrors::FailedRead { file_path } => {
+                write!(f, "Failed to read file: {:?}", file_path)
+            }
+            FileErrors::FailedWrite { file_path } => {
+                write!(f, "Failed to create file: {:?}", file_path)
+            }
+            FileErrors::FailedParse { file_path } => {
+                write!(f, "Failed to parse file: {:?}", file_path)
+            }
         }
     }
 }

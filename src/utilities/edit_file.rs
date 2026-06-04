@@ -3,8 +3,11 @@ use std::{fs, path::PathBuf};
 use crate::utilities::errors::{app_errors::AppErrors, file_errors::FileErrors};
 
 pub fn edit_file(needle: &str, path: &PathBuf, insert: &str) -> Result<(), AppErrors> {
-    let content =
-        fs::read_to_string(&path).map_err(|_| AppErrors::FileErrors(FileErrors::FailedRead))?;
+    let content = fs::read_to_string(&path).map_err(|_| {
+        AppErrors::FileErrors(FileErrors::FailedRead {
+            file_path: path.to_path_buf(),
+        })
+    })?;
 
     let new_content = match needle {
         "^" => format!("{}\n{}", insert, content),
@@ -19,6 +22,10 @@ pub fn edit_file(needle: &str, path: &PathBuf, insert: &str) -> Result<(), AppEr
         }
     };
 
-    fs::write(&path, new_content).map_err(|_| AppErrors::FileErrors(FileErrors::FailedWrite))?;
+    fs::write(&path, new_content).map_err(|_| {
+        AppErrors::FileErrors(FileErrors::FailedWrite {
+            file_path: path.to_path_buf(),
+        })
+    })?;
     Ok(())
 }

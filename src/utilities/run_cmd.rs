@@ -4,7 +4,7 @@ use crate::utilities::errors::{app_errors::AppErrors, cmd_errors::CmdErrors};
 
 pub fn run_cmd(commands: &str, args: &str) -> Result<(), AppErrors> {
     Command::new(commands)
-        .arg(args)
+        .args(args.split_whitespace())
         .output()
         .map_err(|e| match e.kind() {
             ErrorKind::NotFound => AppErrors::CmdErrors(CmdErrors::NotFound),
